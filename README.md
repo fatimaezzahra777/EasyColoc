@@ -54,10 +54,3 @@
 - JavaScript natif pour certaines interactions
 
 ---
-
-## 🔹 Installation
-
-1. Cloner le projet :  
-```bash
-git clone <votre-repo-url>
-cd easycoloc
