@@ -63,13 +63,11 @@
             </div>
         </div>
 
-        {{-- Recent Expenses --}}
+
         <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
                 <h3 class="font-semibold text-slate-800 text-sm">Dernières dépenses</h3>
-                <a href="{{ route('expenses.index') }}" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition-colors">
-                    Voir toutes →
-                </a>
+               
             </div>
             <div class="divide-y divide-slate-100">
                 @forelse($recentExpenses ?? [] as $expense)

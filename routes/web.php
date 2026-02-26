@@ -1,84 +1,65 @@
 <?php
 
+use App\Http\Controllers\DépensesController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-
-
 use App\Http\Controllers\ColocationController;
-use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\DashboardController;
 
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class,'index'])
+    ->middleware('auth')
+    ->name('dashboard');
+
 
 Route::middleware('auth')->group(function () {
-    
-    Route::get('/profile', [ProfileController::class, 'edit'])
-        ->name('profile.edit');
 
-    Route::patch('/profile', [ProfileController::class, 'update'])
-        ->name('profile.update');
+    Route::get('/profile',    [ProfileController::class, 'edit'])   ->name('profile.edit');
+    Route::patch('/profile',  [ProfileController::class, 'update']) ->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::delete('/profile', [ProfileController::class, 'destroy'])
-        ->name('profile.destroy');
+    Route::resource('colocations', ColocationController::class);
+   
 
-    Route::get('/colocations', [ColocationController::class, 'index'])
-        ->name('colocations.index');
+    Route::prefix('colocations/{colocation}')->group(function () {
 
-    Route::get('/colocations/create', [ColocationController::class, 'create'])
-        ->name('colocations.create');
+        Route::get('/dépenses',        [DépensesController::class, 'index'])  ->name('dépenses.index');
+        Route::get('/dépenses/create', [DépensesController::class, 'create']) ->name('dépenses.create');
+        Route::post('/dépenses',       [DépensesController::class, 'store'])  ->name('dépenses.store');
+        Route::delete('/dépenses/{expense}', [DépensesController::class, 'destroy'])->name('dépenses.destroy');
 
-    Route::post('/colocations', [ColocationController::class, 'store'])
-        ->name('colocations.store');
 
-    Route::get('/colocations/{colocation}', [ColocationController::class, 'show'])
-        ->name('colocations.show');
+        Route::get('/categories',          [CategoryController::class, 'index'])  ->name('categories.index');
+        Route::post('/categories',         [CategoryController::class, 'store'])  ->name('categories.store');
+        Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
-    Route::get('/colocations/{colocation}/edit', [ColocationController::class, 'edit'])
-        ->name('colocations.edit');
 
-    Route::put('/colocations/{colocation}', [ColocationController::class, 'update'])
-        ->name('colocations.update');
+        Route::get('/invitations',         [InvitationController::class, 'index'])  ->name('invitations.index');
+        Route::get('/invitations/create',  [InvitationController::class, 'create']) ->name('invitations.create');
+        Route::post('/invitations',        [InvitationController::class, 'store'])  ->name('invitations.store');
+        Route::delete('/invitations/{invitation}', [InvitationController::class, 'cancel'])->name('invitations.cancel');
 
-    Route::get('/colocations/{colocation}/expenses', [ExpenseController::class, 'index'])
-        ->name('dépenses.index');
+        Route::get('/payments',            [PaymentController::class, 'index'])  ->name('payments.index');
+        Route::get('/payments/create',     [PaymentController::class, 'create']) ->name('payments.create');
+        Route::post('/payments',           [PaymentController::class, 'store'])  ->name('payments.store');
+        Route::post('/payments/{payment}/confirm', [PaymentController::class, 'confirm'])->name('payments.confirm');
+    });
 
-    Route::get('/colocations/{colocation}/expenses/create', [ExpenseController::class, 'create'])
-        ->name('dépenses.create');
-
-    Route::post('/colocations/{colocation}/expenses', [ExpenseController::class, 'store'])
-        ->name('dépenses.store');
-
-    Route::get('/colocations/{colocation}/categories', [CategoryController::class, 'index'])
-        ->name('categories.index');
-
-    Route::post('/colocations/{colocation}/categories', [CategoryController::class, 'store'])
-        ->name('categories.store');
-
-    Route::get('/colocations/{colocation}/invitations', [InvitationController::class, 'index'])
-        ->name('invitations.index');
-
-    Route::post('/colocations/{colocation}/invitations', [InvitationController::class, 'store'])
-        ->name('invitations.store');
-
-    Route::get('/colocations/{colocation}/payments', [PaymentController::class, 'index'])
-        ->name('payments.index');
-
-    Route::post('/colocations/{colocation}/payments', [PaymentController::class, 'store'])
-        ->name('payments.store');
+    Route::post('/invitations/{invitation}/accept',  [InvitationController::class, 'accept']) ->name('invitations.accept');
+    Route::post('/invitations/{invitation}/decline', [InvitationController::class, 'decline'])->name('invitations.decline');
 });
 
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+
+Route::middleware(['auth','is_admin'])->prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])
         ->name('dashboard');
@@ -86,11 +67,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/users', [AdminUserController::class, 'index'])
         ->name('users.index');
 
-    Route::post('/users/{user}/ban', [AdminUserController::class, 'ban'])
+    Route::patch('/users/{user}/ban', [AdminUserController::class, 'ban'])
         ->name('users.ban');
 
-    Route::post('/users/{user}/unban', [AdminUserController::class, 'unban'])
+    Route::patch('/users/{user}/unban', [AdminUserController::class, 'unban'])
         ->name('users.unban');
+    
+    Route::get('/users', [AdminUserController::class, 'index'])
+        ->name('users');
 
 });
 

@@ -81,10 +81,7 @@
                 </div>
             @endforeach
         </div>
-
-        <div class="mt-6">
-            {{ $colocations->links() }}
-        </div>
+    {{ $colocations->links() }}
     @endif
 
 @endsection
