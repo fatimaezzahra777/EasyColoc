@@ -19,7 +19,7 @@ class Colocation extends Model
     {
         return $this->hasMany(Membership::class);
     }
-    
+
     public function dépenses()
     {
         return $this->hasMany(Dépenses::class);
@@ -30,5 +30,9 @@ class Colocation extends Model
         return $this->belongsToMany(User::class, 'memberships')
             ->withPivot(['role', 'left_at'])
             ->withTimestamps();
+    }
+    public function invitations()
+    {
+        return $this->hasMany(ColocationInvitation::class);
     }
 }
