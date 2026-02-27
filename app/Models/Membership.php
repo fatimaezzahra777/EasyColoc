@@ -27,4 +27,5 @@ class Membership extends Model
     {
         return $this->role === 'owner';
     }
+
 }

@@ -5,7 +5,7 @@
 @section('page-subtitle', 'Gérez vos invitations de colocation')
 
 @section('header-actions')
-    <a href="{{ route('invitations.create') }}"
+    <a href="{{ route('invitations.create', $colocation) }}"
        class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-emerald-500/25 active:scale-[0.97]">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>

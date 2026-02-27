@@ -56,6 +56,8 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/invitations/{invitation}/accept',  [InvitationController::class, 'accept']) ->name('invitations.accept');
     Route::post('/invitations/{invitation}/decline', [InvitationController::class, 'decline'])->name('invitations.decline');
+    Route::post('/colocations/{colocation}/invite', [ColocationController::class, 'sendInvitation'])->name('colocations.invite');
+    Route::get('/invitations/accept/{token}', [InvitationController::class, 'accept'])->name('invitations.accept');
 });
 
 

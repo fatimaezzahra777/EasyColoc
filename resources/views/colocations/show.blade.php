@@ -60,14 +60,14 @@
                     @forelse($colocation->memberships as $member)
                         <div class="flex items-center gap-3 px-6 py-3.5">
                             <div class="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
-                                {{ strtoupper(substr($member->name, 0, 1)) }}
+                                {{ strtoupper(substr($member->user->name, 0, 1)) }}
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-slate-700 truncate">{{ $member->name }}</p>
-                                <p class="text-xs text-slate-400 truncate">{{ $member->email }}</p>
+                                <p class="text-sm font-medium text-slate-700 truncate">{{ $member->user->name }}</p>
+                                <p class="text-xs text-slate-400 truncate">{{ $member->user->email }}</p>
                             </div>
-                            @if($member->id === $colocation->owner_id)
-                                <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium flex-shrink-0">Admin</span>
+                            @if($member->role === 'owner')
+                                <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium flex-shrink-0">Owner</span>
                             @endif
                         </div>
                     @empty
