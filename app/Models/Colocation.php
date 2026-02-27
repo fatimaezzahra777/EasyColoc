@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Http\Controllers\InvitationController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Colocation extends Model
@@ -33,6 +34,6 @@ class Colocation extends Model
     }
     public function invitations()
     {
-        return $this->hasMany(ColocationInvitation::class);
+        return $this->hasMany(InvitationController::class);
     }
 }
