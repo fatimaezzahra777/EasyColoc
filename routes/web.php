@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\DépensesController;
+use App\Http\Controllers\DepensesController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ColocationController;
@@ -32,20 +32,19 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('colocations/{colocation}')->group(function () {
 
-        Route::get('/dépenses',        [DépensesController::class, 'index'])  ->name('dépenses.index');
-        Route::get('/dépenses/create', [DépensesController::class, 'create']) ->name('dépenses.create');
-        Route::post('/dépenses',       [DépensesController::class, 'store'])  ->name('dépenses.store');
-        Route::delete('/dépenses/{expense}', [DépensesController::class, 'destroy'])->name('dépenses.destroy');
+        Route::get('/depenses',        [DepensesController::class, 'index'])  ->name('depenses.index');
+        Route::get('/depenses/create', [DepensesController::class, 'create']) ->name('depenses.create');
+        Route::delete('/depenses/destroy', [DepensesController::class, 'destroy'])->name('depenses.destroy');
+        Route::post('/depenses/store', [DepensesController::class, 'store'])->name('depenses.store');
 
 
-        Route::get('/categories',          [CategoryController::class, 'index'])  ->name('categories.index');
-        Route::post('/categories',         [CategoryController::class, 'store'])  ->name('categories.store');
+        Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+        Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
         Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
 
         Route::get('/invitations',         [InvitationController::class, 'index'])  ->name('invitations.index');
         Route::get('/invitations/create',  [InvitationController::class, 'create']) ->name('invitations.create');
-        Route::post('/invitations',        [InvitationController::class, 'store'])  ->name('invitations.store');
         Route::delete('/invitations/{invitation}', [InvitationController::class, 'cancel'])->name('invitations.cancel');
 
         Route::get('/payments',            [PaymentController::class, 'index'])  ->name('payments.index');
@@ -54,10 +53,16 @@ Route::middleware('auth')->group(function () {
         Route::post('/payments/{payment}/confirm', [PaymentController::class, 'confirm'])->name('payments.confirm');
     });
 
+
     Route::post('/invitations/{invitation}/accept',  [InvitationController::class, 'accept']) ->name('invitations.accept');
     Route::post('/invitations/{invitation}/decline', [InvitationController::class, 'decline'])->name('invitations.decline');
     Route::post('/colocations/{colocation}/invite', [ColocationController::class, 'sendInvitation'])->name('colocations.invite');
     Route::get('/invitations/accept/{token}', [InvitationController::class, 'accept'])->name('invitations.accept');
+    Route::prefix('colocations/{colocation}')->group(function () {
+    Route::post('/invitations', [InvitationController::class, 'store'])->name('invitations.store');
+});
+    Route::get('/invitations/{token}/accept', [InvitationController::class, 'accept'])
+    ->name('invitations.accept');
 });
 
 
