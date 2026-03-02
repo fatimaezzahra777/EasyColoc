@@ -6,7 +6,6 @@ use App\Models\Colocation;
 use Illuminate\Http\Request;
 use App\Models\Invitation;
 use App\Models\Membership;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Mail\ColocationInvitationMail;
@@ -18,7 +17,10 @@ class ColocationController extends Controller
      */
     public function index()
     {
-        $colocations = Colocation::paginate(10); 
+        $colocations = Colocation::whereHas('memberships', function ($q) {
+            $q->where('user_id', auth()->id());
+        })->paginate(10);
+
         return view('colocations.index', compact('colocations'));
     }
     /**
@@ -52,6 +54,10 @@ class ColocationController extends Controller
             'colocation_id' => $colocation->id,
             'role' => 'owner',
         ]);
+
+        if (auth()->user()->colocations()->exists()) {
+            abort(403);
+        }
 
         return redirect()->route('dashboard')
                         ->with('success', 'Colocation créée avec succès !');
@@ -99,7 +105,7 @@ class ColocationController extends Controller
     }
     public function sendInvitation(Request $request, Colocation $colocation)
     {
-        $this->authorize('update', $colocation); 
+        
 
         $request->validate([
             'email' => 'required|email'
@@ -117,6 +123,7 @@ class ColocationController extends Controller
 
         return back()->with('success', 'Invitation envoyée');
     }
+
 
 }
 
