@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use App\Models\Membership;
+use App\Models\Invitation;
 use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
@@ -45,6 +47,33 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
+        if (session()->has('invitation_token')) {
+
+        $token = session()->pull('invitation_token');
+
+        $invitation = Invitation::where('token', $token)
+            ->where('email', auth()->user()->email)
+            ->first();
+
+        if ($invitation) {
+
+            Membership::firstOrCreate([
+                'user_id' => auth()->id(),
+                'colocation_id' => $invitation->colocation_id,
+            ], [
+                'role' => 'member',
+            ]);
+
+            $invitation->delete();
+
+            return redirect()->route(
+                'colocations.show',
+                $invitation->colocation_id
+            );
+        }
+    }
+
         return redirect(route('dashboard', absolute: false));
     }
+
 }

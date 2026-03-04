@@ -25,6 +25,6 @@ class Depenses extends Model
     }
 
     public function category(){
-        return $this->belongsTo(Depenses::class);
+        return $this->belongsTo(Category::class);
     }
 }

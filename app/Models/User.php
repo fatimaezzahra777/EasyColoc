@@ -21,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'created_at',
+        'is_banned',
+        'is_global_admin',
     ];
 
     /**
@@ -57,6 +60,11 @@ class User extends Authenticatable
             ->where('colocation_id', $colocationId)
             ->whereNull('left_at')
             ->first();
+    }
+
+    public function depenses()
+    {
+        return $this->hasMany(Depenses::class);
     }
 
     public function colocations()

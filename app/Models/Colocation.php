@@ -21,9 +21,9 @@ class Colocation extends Model
         return $this->hasMany(Membership::class);
     }
 
-    public function dépenses()
+    public function depenses()
     {
-        return $this->hasMany(Dépenses::class);
+        return $this->hasMany(Depenses::class);
     }
 
     public function users()
@@ -35,5 +35,15 @@ class Colocation extends Model
     public function invitations()
     {
         return $this->hasMany(InvitationController::class);
+    }
+
+    public function categories()
+    {
+        return $this->hasMany(Category::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
     }
 }

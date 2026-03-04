@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DepensesController;
+use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ColocationController;
@@ -47,10 +48,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/invitations/create',  [InvitationController::class, 'create']) ->name('invitations.create');
         Route::delete('/invitations/{invitation}', [InvitationController::class, 'cancel'])->name('invitations.cancel');
 
-        Route::get('/payments',            [PaymentController::class, 'index'])  ->name('payments.index');
-        Route::get('/payments/create',     [PaymentController::class, 'create']) ->name('payments.create');
+        Route::get('/balances',[DepensesController::class, 'balances'])->name('balances.index');
+
         Route::post('/payments',           [PaymentController::class, 'store'])  ->name('payments.store');
         Route::post('/payments/{payment}/confirm', [PaymentController::class, 'confirm'])->name('payments.confirm');
+        Route::post('/leave',[ColocationController::class, 'leave'])->name('colocations.leave');
+        
     });
 
 
@@ -63,25 +66,16 @@ Route::middleware('auth')->group(function () {
 });
     Route::get('/invitations/{token}/accept', [InvitationController::class, 'accept'])
     ->name('invitations.accept');
+    Route::post('/users/{user}/reputation', [MembershipController::class, 'vote'])->name('users.reputation');
 });
 
 
 Route::middleware(['auth','is_admin'])->prefix('admin')->name('admin.')->group(function () {
 
-    Route::get('/dashboard', [AdminDashboardController::class, 'index'])
-        ->name('dashboard');
-
-    Route::get('/users', [AdminUserController::class, 'index'])
-        ->name('users.index');
-
-    Route::patch('/users/{user}/ban', [AdminUserController::class, 'ban'])
-        ->name('users.ban');
-
-    Route::patch('/users/{user}/unban', [AdminUserController::class, 'unban'])
-        ->name('users.unban');
-    
-    Route::get('/users', [AdminUserController::class, 'index'])
-        ->name('users');
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::patch('/users/{user}/ban', [AdminUserController::class, 'ban'])->name('users.ban');
+    Route::patch('/users/{user}/unban', [AdminUserController::class, 'unban'])->name('users.unban');
 
 });
 
