@@ -15,9 +15,11 @@ class ColocationController extends Controller
     /**
      * Display a listing of the resource.
      */
+    /* Cette fonction récupere uniquement les colocations l’utilisateur connecté appartient
+     puis les affiche avec une pagination de 10 par page*/
     public function index()
     {
-        $colocations = Colocation::whereHas('memberships', function ($q) {
+        $colocations = Colocation::whereHas('memberships', function ( $q) {
             $q->where('user_id', auth()->id());
         })->paginate(10);
 
@@ -26,6 +28,7 @@ class ColocationController extends Controller
     /**
      * Show the form for creating a new resource.
      */
+    // Affiche le formulaire pour creer une nouvelle colocation appartenant a user connecte
     public function create()
     {
         $colocations = Colocation::where('owner_id', auth()->id())->get();
@@ -35,20 +38,20 @@ class ColocationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    //Valide et crée une nouvelle colocation et crée le membership de l'utilisateur en tant que owner
+    //et empêche la création si l'utilisateur déjà dans une colocation
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
 
-        // Crée la colocation une seule fois
         $colocation = Colocation::create([
             'name' => $request->name,
             'owner_id' => auth()->id(),
             'status' => 'active',
         ]);
 
-        // Crée le membership pour le propriétaire
         Membership::create([
             'user_id' => auth()->id(),
             'colocation_id' => $colocation->id,
@@ -65,6 +68,7 @@ class ColocationController extends Controller
     /**
      * Display the specified resource.
      */
+    //Affiche les detaille d'une colocation
     public function show(Colocation $colocation)
     {
         // Retourne la vue show
@@ -74,6 +78,7 @@ class ColocationController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
+    // affiche le view pour modifier une colocation
     public function edit(Colocation $colocation)
     {
         return view('colocations.edit', compact('colocation'));
@@ -82,6 +87,8 @@ class ColocationController extends Controller
     /**
      * Update the specified resource in storage.
      */
+
+    // Modifier un colocationn
     public function update(Request $request, Colocation $colocation)
     {
         $request->validate([
@@ -97,16 +104,18 @@ class ColocationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+    // Supprimer une colocation
     public function destroy(Colocation $colocation)
     {
         $colocation->delete();
         return redirect()->route('colocations.index')
                          ->with('success', 'Colocation supprimée !');
     }
+
+    // Valide l'email crée une invitation pour la colocation envoie l'email au destinataire et affiche un message de succès
     public function sendInvitation(Request $request, Colocation $colocation)
     {
         
-
         $request->validate([
             'email' => 'required|email'
         ]);
@@ -122,6 +131,24 @@ class ColocationController extends Controller
             ->send(new ColocationInvitationMail($invitation));
 
         return back()->with('success', 'Invitation envoyée');
+    }
+
+    public function leave(Colocation $colocation)
+    {
+        $user = auth()->user();
+
+        $membership = $colocation->memberships()
+            ->where('user_id', $user->id)
+            ->firstOrFail();
+
+        if ($membership->role === 'owner') {
+            abort(403, 'Le propriétaire ne peut pas quitter la colocation.');
+        }
+
+        $membership->delete();
+
+        return redirect()->route('colocations.index')
+            ->with('success', 'Vous avez quitté la colocation.');
     }
 
 
