@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.nav')
 
 @section('title', 'Administration')
 @section('page-title', 'Administration')
@@ -41,7 +41,7 @@
         <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
                 <h3 class="font-semibold text-slate-800 text-sm">Nouveaux utilisateurs</h3>
-                <a href="{{ route('admin.users') }}" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition-colors">
+                <a href="{{ route('admin.users.index') }}" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition-colors">
                     Voir tous →
                 </a>
             </div>
@@ -59,30 +59,6 @@
                     </div>
                 @empty
                     <div class="px-6 py-8 text-center text-sm text-slate-500">Aucun utilisateur récent.</div>
-                @endforelse
-            </div>
-        </div>
-
-
-        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-                <h3 class="font-semibold text-slate-800 text-sm">Dernières dépenses</h3>
-               
-            </div>
-            <div class="divide-y divide-slate-100">
-                @forelse($recentExpenses ?? [] as $expense)
-                    <div class="flex items-center gap-4 px-6 py-3.5">
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-slate-700 truncate">{{ $expense->description }}</p>
-                            <p class="text-xs text-slate-400 truncate">{{ $expense->colocation->name }} · {{ $expense->user->name }}</p>
-                        </div>
-                        <div class="text-right flex-shrink-0">
-                            <p class="text-sm font-semibold text-slate-800">{{ number_format($expense->amount, 2) }} €</p>
-                            <p class="text-xs text-slate-400">{{ $expense->created_at->diffForHumans() }}</p>
-                        </div>
-                    </div>
-                @empty
-                    <div class="px-6 py-8 text-center text-sm text-slate-500">Aucune dépense récente.</div>
                 @endforelse
             </div>
         </div>
