@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.nav')
 
 @section('title', 'Gestion des utilisateurs')
 @section('page-title', 'Utilisateurs')
@@ -27,7 +27,7 @@
     {{-- Table --}}
     <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-100">
-            <h3 class="font-semibold text-slate-800 text-sm">{{ $users->total() }} utilisateur(s)</h3>
+            <h3 class="font-semibold text-slate-800 text-sm">{{ $users->count() }} utilisateur(s)</h3>
         </div>
 
         <div class="overflow-x-auto">
@@ -57,15 +57,9 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                @if($user->is_admin)
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-700">
-                                        Admin
-                                    </span>
-                                @else
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
-                                        Utilisateur
-                                    </span>
-                                @endif
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+                                    Utilisateur
+                                </span>
                             </td>
                             <td class="px-6 py-4">
                                 <span class="text-sm text-slate-600">{{ $user->colocations_count ?? 0 }}</span>
@@ -74,35 +68,38 @@
                                 <span class="text-sm text-slate-500">{{ $user->created_at->format('d M Y') }}</span>
                             </td>
                             <td class="px-6 py-4">
-                                @if($user->email_verified_at)
+                                @if($user->is_banned)
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
+                                        Banni
+                                    </span>
+                                @elseif($user->email_verified_at)
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                         Vérifié
                                     </span>
                                 @else
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
                                         Non vérifié
                                     </span>
                                 @endif
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-2 justify-end">
-                                    @if(!$user->is_admin)
-                                        <form method="POST" action="{{ route('admin.users.promote', $user) }}">
+
+                                    {{-- Ban / Unban --}}
+                                    @if(!$user->is_banned)
+                                        <form method="POST" action="{{ route('admin.users.ban', $user) }}">
                                             @csrf
-                                            <button type="submit" class="px-3 py-1.5 bg-purple-50 text-purple-600 hover:bg-purple-100 text-xs font-medium rounded-lg transition-colors" title="Promouvoir admin">
-                                                Admin
+                                            @method('PATCH')
+                                            <button class="px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-xs">
+                                                Bannir
                                             </button>
                                         </form>
-                                    @endif
-                                    @if($user->id !== auth()->id())
-                                        <form method="POST" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm('Supprimer cet utilisateur ?')">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                                </svg>
+                                    @else
+                                        <form method="POST" action="{{ route('admin.users.unban', $user) }}">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button class="px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-lg text-xs">
+                                                Débannir
                                             </button>
                                         </form>
                                     @endif
@@ -120,9 +117,7 @@
             </table>
         </div>
 
-        <div class="px-6 py-4 border-t border-slate-100">
-            {{ $users->withQueryString()->links() }}
-        </div>
+        
     </div>
 
 @endsection
