@@ -5,4 +5,4 @@ Vous êtes invité(e) à rejoindre la colocation :
 
 Cliquez sur ce lien pour accepter :
 
-{{ route('colocations.invitations.accept', $invitation->token) }}
+{{ route('invitations.accept', $invitation->token) }}
