@@ -23,7 +23,7 @@
                 <p class="text-sm text-slate-500 mt-1">Votre colocataire recevra un lien par e-mail pour rejoindre la colocation.</p>
             </div>
 
-            <form method="POST" action="{{ route('invitations.store', $colocation) }}" class="px-8 py-6 space-y-5">
+              <form method="POST" action="{{ route('invitations.store', $colocation) }}">
                 @csrf
 
                 <div>
@@ -37,23 +37,12 @@
                     @enderror
                 </div>
 
-                <div>
-                    <label for="colocation_id" class="block text-sm font-medium text-slate-700 mb-1.5">Colocation <span class="text-red-500">*</span></label>
-                    <select id="colocation_id" name="colocation_id" required
-                            class="w-full px-4 py-3 rounded-xl border text-sm text-slate-800 outline-none transition-all bg-white
-                                   {{ $errors->has('colocation_id') ? 'border-red-400 bg-red-50' : 'border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' }}">
-                        <option value="">Sélectionner une colocation</option>
-                        @foreach($colocations ?? [] as $coloc)
-                            <option value="{{ $coloc->id }}" {{ old('colocation_id', request('colocation')) == $coloc->id ? 'selected' : '' }}>
-                                {{ $coloc->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('colocation_id')
-                        <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
+               <input type="hidden" name="colocation_id" value="{{ $colocation->id }}">
 
+                {{-- optionnel : afficher juste le nom --}}
+                <div class="mt-2 text-sm text-slate-700">
+                    Colocation : <span class="font-semibold">{{ $colocation->name }}</span>
+                </div>
                 <div>
                     <label for="message" class="block text-sm font-medium text-slate-700 mb-1.5">Message personnalisé (optionnel)</label>
                     <textarea id="message" name="message" rows="3"
