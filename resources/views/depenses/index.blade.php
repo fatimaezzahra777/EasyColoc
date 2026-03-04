@@ -12,34 +12,13 @@
         </svg>
         Ajouter une dépense
     </a>
+    <a href="{{ route('balances.index', $colocation) }}"
+    class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-emerald-500/25 active:scale-[0.97]">
+        Voir les balances
+    </a>
 @endsection
 
 @section('content')
-
-    {{-- Filter bar --}}
-    <form method="GET" class="flex flex-wrap items-center gap-3 mb-6 bg-white rounded-2xl border border-slate-200 px-5 py-4">
-        <div class="flex-1 min-w-48">
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="Rechercher une dépense..."
-                   class="w-full px-4 py-2 rounded-xl border border-slate-200 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-all">
-        </div>
-        
-        <div>
-            <select name="category_id" class="px-4 py-2 rounded-xl border border-slate-200 text-sm text-slate-700 focus:outline-none focus:border-emerald-400 transition-all bg-white">
-                <option value="">Toutes les catégories</option>
-                @foreach($categories ?? [] as $cat)
-                    <option value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'selected' : '' }}>
-                        {{ $cat->name }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-        <button type="submit" class="px-4 py-2 bg-slate-800 text-white text-sm font-medium rounded-xl hover:bg-slate-700 transition-all">
-            Filtrer
-        </button>
-        @if(request()->hasAny(['search','colocation_id','category_id']))
-            <a href="{{ route('depenses.index', ['colocation'=> $colocation->id]) }}" class="text-sm text-slate-500 hover:text-slate-700 transition-colors">Réinitialiser</a>
-        @endif
-    </form>
 
     {{-- Table --}}
     <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
@@ -79,13 +58,10 @@
                                     <span class="text-sm text-slate-600">{{ $dépense->colocation->name }}</span>
                                 </td>
                                 <td class="px-6 py-4">
-                                    @if($dépense->category)
                                         <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700">
-                                            {{ $dépense->category->name }}
-                                        </span>
-                                    @else
-                                        <span class="text-slate-400 text-xs">—</span>
-                                    @endif
+    {{ $dépense->category?->name ?? 'Non catégorisée' }}
+</span>
+                                    
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-2">
@@ -124,3 +100,4 @@
     </div>
 
 @endsection
+
