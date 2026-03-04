@@ -10,17 +10,20 @@ class CategoryController extends Controller
 {
     public function index(Colocation $colocation)
     {
-        $categories = $colocation->categories; // récupère toutes les catégories de la coloc
+        // récupère toutes les catégories de la colocation
+        $categories = $colocation->categories; 
         return view('categories.index', compact('colocation', 'categories'));
     }
 
+    // cette function juste pour afficher le view create
     public function create(Colocation $colocation)
     {
         return view('categories.create', compact('colocation'));
     }
+
+    //cette function pour creer un categorie obligatoire entrer le nom est un nom unique dans la colocation 
     public function store(Request $request, Colocation $colocation)
     {
-        
 
         $request->validate([
             'name' => [
@@ -38,9 +41,9 @@ class CategoryController extends Controller
         return back()->with('success', 'Catégorie ajoutée avec succès.');
     }
 
+    // cette function pour supprimer un categorie i il n'existe pas dans une depense
     public function destroy(Category $category)
     {
-        
 
         if ($category->depenses()->exists()) {
             return back()->withErrors('Cette catégorie est utilisée.');
