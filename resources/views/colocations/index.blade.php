@@ -4,7 +4,15 @@
 @section('page-title', 'Mes Colocations')
 @section('page-subtitle', 'Gérez toutes vos colocations')
 
+
+@php
+    $hasColocation = auth()->user()
+        ->colocations()
+        ->exists();
+@endphp
 @section('header-actions')
+
+@if(!$hasColocation)
     <a href="{{ route('colocations.create') }}"
        class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-emerald-500/25 active:scale-[0.97]">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -12,6 +20,18 @@
         </svg>
         Nouvelle colocation
     </a>
+@else
+    <button
+        class="inline-flex items-center gap-2 px-4 py-2 bg-slate-300 text-slate-500 text-sm font-semibold rounded-xl cursor-not-allowed"
+        disabled
+        title="Vous avez déjà une colocation">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Nouvelle colocation
+    </button>
+@endif
+
 @endsection
 
 @section('content')
